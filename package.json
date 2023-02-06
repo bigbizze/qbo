@@ -1,6 +1,6 @@
 {
   "name": "qbo",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "node.js client for Intuit's IPP QuickBooks V3 API.",
   "main": "index.js",
   "typings": "types/index.d.ts",

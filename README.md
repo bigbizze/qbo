@@ -9,6 +9,7 @@ The main changes to it:
 - The data in all responses are now accessible with the "data" property rather than the name of the entity being queried.
 - Multiple bugs were patched like not loading the `USER_INFO_URL` and `TOKEN_URL` correctly.
 - I have added a typescript definition file for the methods I personally needed to use. If anyone would like to contribute to this and add the rest of the types, please feel free to do so.
+  - The types included so far are Customer, CustomerType, CompanyInfo and Employee.
 
 ## Installation
 

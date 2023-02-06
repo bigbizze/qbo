@@ -8,12 +8,14 @@ import { UserInfo } from "./user-info";
 import { RefreshAccessToken } from "./refresh-access-token";
 
 export type Get<T> = {
-  time: string,
+  time: Date,
+  timeStr: string,
   data: T
 };
 
 export type Find<T> = {
-  time: string;
+  time: Date;
+  timeStr: string,
   startPosition: number;
   maxResults:    number;
   data: T[]

@@ -10,6 +10,7 @@ const request   = require('request'),
     uuid      = require('uuid').v4,
     debug     = require('request-debug'),
     util      = require('util'),
+    parseISO = require('date-fns/fp/parseISO'),
     formatISO = require('date-fns/fp/formatISO'),
     _         = require('underscore'),
     Promise   = require('bluebird'),
@@ -2249,7 +2250,6 @@ module.request = function(context, verb, options, entity) {
                         throw new Error(`Unexpected empty data`);
                     }
                     delete body[keyToDelete];
-                    resolve({ ...body, ...newObj });
                 } else {
                     for (const key in body.QueryResponse) {
                         if (body.QueryResponse[key] === undefined) {
@@ -2268,8 +2268,12 @@ module.request = function(context, verb, options, entity) {
                         throw new Error(`Unexpected empty QueryResponse`);
                     }
                     delete body.QueryResponse;
-                    resolve({ ...body, ...newObj });
                 }
+                body.timeStr = body.time;
+                if (body.time !== undefined) {
+                    body.time = parseISO(body.time);
+                }
+                resolve({ ...body, ...newObj });
             }
         })
     })

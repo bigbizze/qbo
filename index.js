@@ -7,7 +7,7 @@
  */
 
 const request   = require('request'),
-    uuid      = require('uuid'),
+    uuid      = require('uuid').v4,
     debug     = require('request-debug'),
     util      = require('util'),
     formatISO = require('date-fns/fp/formatISO'),
@@ -83,7 +83,6 @@ function QuickBooks(consumerKey, consumerSecret, token, tokenSecret, realmId, us
     if (calledFromNewKey !== sessionId) {
         throw new Error("Please initialize this with QuickBooks.new() rather than new QuickBooks()!");
     }
-    const oauthversion = '2.0';
     var prefix = _.isObject(consumerKey) ? 'consumerKey.' : '';
     this.consumerKey = eval(prefix + 'consumerKey');
     this.consumerSecret = eval(prefix + 'consumerSecret');
@@ -97,11 +96,7 @@ function QuickBooks(consumerKey, consumerSecret, token, tokenSecret, realmId, us
         : QuickBooks.V3_ENDPOINT_BASE_URL.replace('sandbox-', '');
 
     this.minorversion = eval(prefix + 'minorversion') || 65;
-    this.oauthversion = eval(prefix + 'oauthversion') || '1.0a';
     this.refreshToken = eval(prefix + 'refreshToken') || null;
-    if (!eval(prefix + 'tokenSecret') && this.oauthversion !== '2.0') {
-        throw new Error('tokenSecret not defined');
-    }
 }
 
 QuickBooks.new = async function (opts) {
@@ -117,10 +112,9 @@ QuickBooks.new = async function (opts) {
     const discoveryUrl = useSandbox ? 'https://developer.intuit.com/.well-known/openid_sandbox_configuration/' : 'https://developer.api.intuit.com/.well-known/openid_configuration/';
     const qboInstance = new QuickBooks(clientId, clientSecret, accessToken, false, realmId, useSandbox, debug, minorversion, refreshToken, sessionId);
     await new Promise((resolve, reject) => {
-        discoverOAuthUrls((newConfiguration) => {
+        discoverOAuthUrls(newConfiguration => {
             try {
                 for (const [ key, value ] of Object.entries(newConfiguration)) {
-                    // @ts-ignore
                     QuickBooks[key] = value;
                 }
                 resolve(null);
@@ -2201,13 +2195,9 @@ module.request = function(context, verb, options, entity) {
 
     opts.qs.minorversion = opts.qs.minorversion || context.minorversion;
     opts.headers['User-Agent'] = 'node-quickbooks: version ' + version
-    opts.headers['Request-Id'] = uuid.v1()
+    opts.headers['Request-Id'] = uuid()
     opts.qs.format = 'json';
-    if (context.oauthversion == '2.0'){
-        opts.headers['Authorization'] =  'Bearer ' + context.token
-    } else {
-        opts.oauth = module.oauth(context);
-    }
+    opts.headers['Authorization'] =  'Bearer ' + context.token
     if (options.url.match(/pdf$/)) {
         opts.headers['accept'] = 'application/pdf'
         opts.encoding = null
@@ -2309,13 +2299,9 @@ module.requestOrig = function(context, verb, options, entity, callback) {
 
     opts.qs.minorversion = opts.qs.minorversion || context.minorversion;
     opts.headers['User-Agent'] = 'node-quickbooks: version ' + version
-    opts.headers['Request-Id'] = uuid.v1()
+    opts.headers['Request-Id'] = uuid()
     opts.qs.format = 'json';
-    if (context.oauthversion == '2.0'){
-        opts.headers['Authorization'] =  'Bearer ' + context.token
-    } else {
-        opts.oauth = module.oauth(context);
-    };
+    opts.headers['Authorization'] =  'Bearer ' + context.token
     if (options.url.match(/pdf$/)) {
         opts.headers['accept'] = 'application/pdf'
         opts.encoding = null

@@ -19,7 +19,7 @@ export type Find<T> = {
   data: T[]
 }
 
-export type Update<T> = T & {
+export type Update<T> = Omit<Omit<T, "Id">, "SyncToken"> & {
   Id: string,
   SyncToken: string
 }

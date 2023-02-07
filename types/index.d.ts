@@ -27,9 +27,9 @@ export type Update<T> = Omit<Omit<T, "Id">, "SyncToken"> & {
 }
 
 export interface QueryCriteria {
-  fetchAll: boolean,
-  limit: number,
-  offset: number,
+  fetchAll?: boolean,
+  limit?: number,
+  offset?: number,
 }
 export interface NewQuickBooksInstanceSettings {
   clientId: string,
